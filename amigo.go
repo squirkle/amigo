@@ -27,6 +27,7 @@ func (c *Config) Get(key string) interface{} {
 	return c.confFile.Get(key)
 }
 
+// Return a new configuration object for use by library consumers
 func New(filepath string) (*Config, error) {
 	file, err := toml.LoadFile(filepath)
 
@@ -37,6 +38,8 @@ func New(filepath string) (*Config, error) {
 	c := &Config{}
 	c.confFile = file
 
+	// if a envmap table is defined, associate the specified keys with the env
+	// vars defiend there
 	if file.Has(EnvMapKey) {
 		envmap := file.Get(EnvMapKey).(*toml.TomlTree)
 		for _, confKey := range envmap.Keys() {
