@@ -36,6 +36,7 @@ func New(filepath string) (*Config, error) {
 	}
 
 	c := &Config{}
+	c.env = make(map[string]string)
 	c.confFile = file
 
 	// if a envmap table is defined, associate the specified keys with the env
