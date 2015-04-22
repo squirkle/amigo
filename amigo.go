@@ -44,7 +44,7 @@ func New(filepath string) (*Config, error) {
 	if file.Has(EnvMapKey) {
 		envmap := file.Get(EnvMapKey).(*toml.TomlTree)
 		for _, confKey := range envmap.Keys() {
-			envKey := envmap.Get(confKey).(string)
+			envKey := envmap.GetPath([]string{confKey}).(string)
 			c.Env(confKey, envKey)
 		}
 	}
