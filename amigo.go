@@ -2,6 +2,7 @@ package amigo
 
 import (
 	"os"
+	"regexp"
 
 	"github.com/pelletier/go-toml"
 )
@@ -27,6 +28,14 @@ func (c *Config) Get(key string) interface{} {
 	return c.confFile.Get(key)
 }
 
+func normalizeKey(key string) string {
+	re := regexp.MustCompile(`^"(.+)"$`)
+	if re.MatchString(key) {
+		return key[1 : len(key)-1]
+	}
+	return key
+}
+
 // Return a new configuration object for use by library consumers
 func New(filepath string) (*Config, error) {
 	file, err := toml.LoadFile(filepath)
@@ -39,13 +48,13 @@ func New(filepath string) (*Config, error) {
 	c.env = make(map[string]string)
 	c.confFile = file
 
-	// if a envmap table is defined, associate the specified keys with the env
+	// if an envmap table is defined, associate the specified keys with the env
 	// vars defined there
 	if file.Has(EnvMapKey) {
 		envmap := file.Get(EnvMapKey).(*toml.TomlTree)
 		for _, confKey := range envmap.Keys() {
 			envKey := envmap.GetPath([]string{confKey}).(string)
-			c.Env(confKey, envKey)
+			c.Env(normalizeKey(confKey), envKey)
 		}
 	}
 	return c, nil
