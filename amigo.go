@@ -40,7 +40,7 @@ func New(filepath string) (*Config, error) {
 	c.confFile = file
 
 	// if a envmap table is defined, associate the specified keys with the env
-	// vars defiend there
+	// vars defined there
 	if file.Has(EnvMapKey) {
 		envmap := file.Get(EnvMapKey).(*toml.TomlTree)
 		for _, confKey := range envmap.Keys() {
